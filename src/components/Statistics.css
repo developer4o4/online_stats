@@ -1,0 +1,267 @@
+.statistics {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.statistics-header {
+  text-align: center;
+  margin-bottom: 40px;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.statistics-header h1 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 2.5em;
+}
+
+.statistics-header p {
+  color: #7f8c8d;
+  font-size: 1.2em;
+}
+
+/* Umumiy statistika */
+.total-stats {
+  margin-bottom: 40px;
+}
+
+.total-stats h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-card.total {
+  border-top: 5px solid #3498db;
+}
+
+.stat-card.male {
+  border-top: 5px solid #3498db;
+}
+
+.stat-card.female {
+  border-top: 5px solid #e74c3c;
+}
+
+.stat-card h3 {
+  color: #7f8c8d;
+  margin-bottom: 15px;
+  font-size: 1.1em;
+}
+
+.stat-number {
+  font-size: 3em;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.stat-percentage {
+  font-size: 1.2em;
+  color: #7f8c8d;
+  font-weight: bold;
+}
+
+/* Yo'nalishlar statistika */
+.directions-stats {
+  margin-bottom: 40px;
+}
+
+.directions-stats h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.directions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.direction-card {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.direction-card:hover {
+  transform: translateY(-3px);
+}
+
+.direction-card h3 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 1.3em;
+  text-align: center;
+}
+
+.direction-total {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #3498db;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.gender-stats {
+  margin-bottom: 20px;
+}
+
+.gender-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.gender-label {
+  color: #7f8c8d;
+}
+
+.gender-count {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Progress bar */
+.progress-section {
+  margin-top: 20px;
+}
+
+.progress-bar {
+  height: 20px;
+  background-color: #ecf0f1;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.progress-male {
+  background-color: #3498db;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.progress-female {
+  background-color: #e74c3c;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  color: #7f8c8d;
+}
+
+/* Diagramma */
+.chart-section {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chart-section h2 {
+  color: #2c3e50;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.chart {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 250px;
+  padding: 20px 0;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.chart-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  margin: 0 10px;
+}
+
+.chart-bar {
+  width: 60px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+  transition: height 0.3s ease;
+  background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);
+}
+
+.chart-value {
+  color: white;
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.chart-label {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #7f8c8d;
+  font-weight: bold;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .statistics {
+    padding: 10px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .directions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart {
+    height: 200px;
+  }
+  
+  .chart-bar {
+    width: 40px;
+  }
+}
