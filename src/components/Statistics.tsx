@@ -85,7 +85,7 @@ const Statistics: React.FC = () => {
             </div>
           )}
 
-          <div className="troubleshooting">
+          {/* <div className="troubleshooting">
             <h3>Token Authentication:</h3>
             <ul>
               <li>✅ Django REST Framework token authentication</li>
@@ -93,7 +93,7 @@ const Statistics: React.FC = () => {
               <li>✅ Endpoint: /api-token-auth/</li>
               <li>✅ Token: .../statistics/ endpointiga headerda yuboriladi</li>
             </ul>
-          </div>
+          </div> */}
 
           <div className="auth-buttons">
             <button onClick={refreshData} className="retry-button">
@@ -102,7 +102,7 @@ const Statistics: React.FC = () => {
             <button onClick={handleClearToken} className="clear-token-button">
               🗑️ Token ni tozalash
             </button>
-            <button onClick={() => window.open('http://127.0.0.1:8000/admin/', '_blank')} 
+            <button onClick={() => window.open('https://aiday.infinite-co.uz/admin/', '_blank')} 
                     className="login-button">
               🔐 Admin Panel
             </button>

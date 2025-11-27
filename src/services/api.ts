@@ -47,7 +47,7 @@ interface TokenResponse {
 }
 
 class ApiService {
-  private baseURL = 'http://127.0.0.1:8000';
+  private baseURL = 'https://aiday.infinite-co.uz';
   private token: string | null = null;
   private username = 'root';
   private password = '12';
