@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Statistics.css';
 
 // BACKEND URL
-const API_URL = "http://127.0.0.1:8000/statistics/dev_404_1212/";
+const API_URL = "https://aiday.infinite-co.uz/statistics/dev_404_1212/";
 
 interface DirectionItem {
   name: string;
