@@ -1,112 +1,119 @@
 import React, { useState, useEffect } from 'react';
-import { apiService, StatisticsData } from '../services/api';
 import './Statistics.css';
 
+// BACKEND URL
+const API_URL = "http://127.0.0.1:8000/statistics/dev_404_1212/";
+
+interface DirectionItem {
+  name: string;
+  total: number;
+  male: number;
+  female: number;
+}
+
+interface StatisticsData {
+  total: {
+    all_users: number;
+    all_male: number;
+    all_female: number;
+  };
+  directions: {
+    [key: string]: DirectionItem;
+  };
+}
+
 const Statistics: React.FC = () => {
+  // 🔐 PAROL STATE
+  const [password, setPassword] = useState("");
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  // STATISTIKA STATE
   const [data, setData] = useState<StatisticsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [debugInfo, setDebugInfo] = useState<string>('');
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // PAROL TEKSHIRISH
+  const checkPassword = () => {
+    if (password === "dev_404_1212") {
+      setIsAuthorized(true);
+    } else {
+      alert("❌ Noto‘g‘ri parol!");
+    }
+  };
 
+  // MA'LUMOTNI OLISH
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
-      setDebugInfo('Token authentication test qilinmoqda...');
 
-      // Avval connection test
-      const connectionTest = await apiService.testConnection();
-      setDebugInfo(`Test natija: ${connectionTest.message}`);
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error("Backend bilan bog'lanib bo'lmadi");
 
-      if (!connectionTest.success) {
-        throw new Error(connectionTest.message);
-      }
-
-      setDebugInfo('Token authentication muvaffaqiyatli, ma\'lumotlar olinmoqda...');
-      const statisticsData = await apiService.getStatistics();
-      setData(statisticsData);
+      const jsonData = await response.json();
+      setData(jsonData);
       setLastUpdated(new Date());
-      
+
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Ma\'lumotlarni yuklab bo\'lmadi';
-      setError(errorMessage);
-      console.error('Xatolik:', err);
+      const msg = err instanceof Error ? err.message : "Xatolik yuz berdi";
+      setError(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  const refreshData = () => {
-    fetchData();
-  };
+  // useEffect doim chaqiriladi, shartli emas
+  useEffect(() => {
+    if (isAuthorized) {
+      fetchData();
+    }
+  }, [isAuthorized]);
 
-  const handleClearToken = () => {
-    apiService.clearToken();
-    setDebugInfo('Token tozalandi, qayta urinib ko\'ring...');
-    setTimeout(() => refreshData(), 1000);
-  };
+  // 🔐 Agar hali authorized bo'lmasa, parol oynasi
+  if (!isAuthorized) {
+    return (
+      <div className="statistics auth-page">
+        <div className="auth-box">
+          <h2>🔐 Statistika uchun parol kerak</h2>
 
-  // Loading holati
+          <input
+            type="password"
+            placeholder="Parol..."
+            className="auth-input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <button className="auth-button" onClick={checkPassword}>
+            Kirish
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // -------------------------
+  // STATISTIKA RENDER QISMI
+  // -------------------------
   if (loading) {
     return (
       <div className="statistics">
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Ma'lumotlar yuklanmoqda...</p>
-          <p className="auth-method">Token Authentication</p>
-          {debugInfo && (
-            <div className="debug-info">
-              <p>{debugInfo}</p>
-            </div>
-          )}
         </div>
       </div>
     );
   }
 
-  // Xatolik holati
   if (error) {
     return (
       <div className="statistics">
         <div className="error-container">
-          <div className="error-icon">⚠️</div>
-          <h2>Authentication Xatosi</h2>
+          <h2>⚠️ Xatolik</h2>
           <p>{error}</p>
-          
-          {debugInfo && (
-            <div className="debug-info">
-              <h4>Debug Ma'lumot:</h4>
-              <p>{debugInfo}</p>
-            </div>
-          )}
-
-          {/* <div className="troubleshooting">
-            <h3>Token Authentication:</h3>
-            <ul>
-              <li>✅ Django REST Framework token authentication</li>
-              <li>✅ Login: root, Parol: 12</li>
-              <li>✅ Endpoint: /api-token-auth/</li>
-              <li>✅ Token: .../statistics/ endpointiga headerda yuboriladi</li>
-            </ul>
-          </div> */}
-
-          <div className="auth-buttons">
-            <button onClick={refreshData} className="retry-button">
-              🔄 Qayta urinish
-            </button>
-            <button onClick={handleClearToken} className="clear-token-button">
-              🗑️ Token ni tozalash
-            </button>
-            <button onClick={() => window.open('https://aiday.infinite-co.uz/admin/', '_blank')} 
-                    className="login-button">
-              🔐 Admin Panel
-            </button>
-          </div>
+          <button onClick={fetchData} className="retry-button">Qayta urinish</button>
         </div>
       </div>
     );
@@ -115,25 +122,18 @@ const Statistics: React.FC = () => {
   if (!data) {
     return (
       <div className="statistics">
-        <div className="error-container">
-          <h2>Ma'lumotlar topilmadi</h2>
-          <button onClick={refreshData} className="retry-button">
-            Yuklash
-          </button>
-        </div>
+        <h2>Ma'lumot topilmadi</h2>
       </div>
     );
   }
 
   const { total, directions } = data;
 
-  // Yo'nalishlar massiviga aylantiramiz
   const directionList = Object.entries(directions).map(([key, value]) => ({
     key,
     ...value
   }));
 
-  // Umumiy foizlarni hisoblash
   const malePercentage = total.all_users > 0 ? (total.all_male / total.all_users) * 100 : 0;
   const femalePercentage = total.all_users > 0 ? (total.all_female / total.all_users) * 100 : 0;
 
@@ -142,28 +142,16 @@ const Statistics: React.FC = () => {
       <header className="statistics-header">
         <div className="header-top">
           <h1>📊 Statistika</h1>
-          <div className="header-buttons">
-            <button onClick={refreshData} className="refresh-button">
-              🔄 Yangilash
-            </button>
-            <button onClick={handleClearToken} className="clear-token-button small">
-              🗑️ Token
-            </button>
-          </div>
+          <button onClick={fetchData} className="refresh-button">🔄 Yangilash</button>
         </div>
-        <p>Loyiha yo'nalishlari bo'yicha umumiy ma'lumotlar</p>
+
         {lastUpdated && (
           <div className="last-updated">
             Oxirgi yangilangan: {lastUpdated.toLocaleTimeString()}
-            <span className="auth-method"> (Token Authentication)</span>
           </div>
-        )}
-        {debugInfo && (
-          <div className="connection-success">✅ {debugInfo}</div>
         )}
       </header>
 
-      {/* Umumiy statistika */}
       <section className="total-stats">
         <h2>👥 Umumiy statistika</h2>
         <div className="stats-grid">
@@ -171,11 +159,13 @@ const Statistics: React.FC = () => {
             <h3>Jami foydalanuvchilar</h3>
             <div className="stat-number">{total.all_users}</div>
           </div>
+
           <div className="stat-card male">
             <h3>🔵 Erkaklar</h3>
             <div className="stat-number">{total.all_male}</div>
             <div className="stat-percentage">{malePercentage.toFixed(1)}%</div>
           </div>
+
           <div className="stat-card female">
             <h3>🔴 Ayollar</h3>
             <div className="stat-number">{total.all_female}</div>
@@ -184,82 +174,46 @@ const Statistics: React.FC = () => {
         </div>
       </section>
 
-      {/* Yo'nalishlar bo'yicha statistika */}
       <section className="directions-stats">
         <h2>🎯 Yo'nalishlar bo'yicha</h2>
         <div className="directions-grid">
-          {directionList.map((direction) => (
-            <div key={direction.key} className="direction-card">
-              <h3>{direction.name}</h3>
-              <div className="direction-total">Jami: {direction.total}</div>
-              
+          {directionList.map((dir) => (
+            <div key={dir.key} className="direction-card">
+              <h3>{dir.name}</h3>
+              <div className="direction-total">Jami: {dir.total}</div>
+
               <div className="gender-stats">
                 <div className="gender-item">
-                  <span className="gender-label">🔵 Erkak:</span>
-                  <span className="gender-count">{direction.male}</span>
+                  <span>🔵 Erkak:</span> <span>{dir.male}</span>
                 </div>
                 <div className="gender-item">
-                  <span className="gender-label">🔴 Ayol:</span>
-                  <span className="gender-count">{direction.female}</span>
+                  <span>🔴 Ayol:</span> <span>{dir.female}</span>
                 </div>
               </div>
 
-              {/* Progress bar */}
               <div className="progress-section">
                 <div className="progress-bar">
-                  <div 
-                    className="progress-male" 
-                    style={{ width: `${direction.total > 0 ? (direction.male / direction.total) * 100 : 0}%` }}
+                  <div
+                    className="progress-male"
+                    style={{ width: `${(dir.male / dir.total) * 100 || 0}%` }}
                   ></div>
-                  <div 
-                    className="progress-female" 
-                    style={{ width: `${direction.total > 0 ? (direction.female / direction.total) * 100 : 0}%` }}
+                  <div
+                    className="progress-female"
+                    style={{ width: `${(dir.female / dir.total) * 100 || 0}%` }}
                   ></div>
                 </div>
-                <div className="progress-labels">
-                  <span>Erkak: {direction.total > 0 ? ((direction.male / direction.total) * 100).toFixed(1) : 0}%</span>
-                  <span>Ayol: {direction.total > 0 ? ((direction.female / direction.total) * 100).toFixed(1) : 0}%</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Diagramma */}
-      <section className="chart-section">
-        <h2>📈 Taqsimot diagrammasi</h2>
-        <div className="chart">
-          {directionList.map((direction) => (
-            <div key={direction.key} className="chart-item">
-              <div 
-                className="chart-bar" 
-                style={{ 
-                  height: `${(direction.total / total.all_users) * 200}px`,
-                  backgroundColor: getDirectionColor(direction.key)
-                }}
-              >
-                <div className="chart-value">{direction.total}</div>
+                <div className="progress-labels">
+                  <span>Erkak: {(dir.male / dir.total * 100 || 0).toFixed(1)}%</span>
+                  <span>Ayol: {(dir.female / dir.total * 100 || 0).toFixed(1)}%</span>
+                </div>
               </div>
-              <div className="chart-label">{direction.name}</div>
             </div>
           ))}
         </div>
       </section>
     </div>
   );
-};
-
-// Yo'nalish ranglari
-const getDirectionColor = (key: string): string => {
-  const colors: { [key: string]: string } = {
-    rfutbol: '#4CAF50',
-    rsumo: '#FF9800',
-    fixtirolar: '#2196F3',
-    ai: '#9C27B0',
-    contest: '#F44336'
-  };
-  return colors[key] || '#607D8B';
 };
 
 export default Statistics;
